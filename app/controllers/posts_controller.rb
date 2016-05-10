@@ -1,11 +1,12 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_category 
 
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.all
+    @post = @category.posts
   end
 
   # GET /posts/1
@@ -15,7 +16,7 @@ class PostsController < ApplicationController
 
   # GET /posts/new
   def new
-    @post = Post.new
+    @post =@category.posts.new
   end
 
   # GET /posts/1/edit
@@ -29,13 +30,14 @@ class PostsController < ApplicationController
   # POST /posts.json
   def create
     @post = current_user.posts.new(post_params)
+    @post.category = @category
     tags = get_tags(post_params[:tag_titles], ',')
     tags.each do |tag|
       @post.tags << tag
     end
     respond_to do |format|
       if @post.save
-        format.html { redirect_to @post, notice: 'Post was successfully created.' }
+        format.html { redirect_to @category, notice: 'Post was successfully created.' }
         format.json { render :show, status: :created, location: @post }
       else
         format.html { render :new }
@@ -50,7 +52,7 @@ class PostsController < ApplicationController
     return head(:forbidden) unless @post.user == current_user
     respond_to do |format|
       if @post.update(post_params)
-        format.html { redirect_to @post, notice: 'Post was successfully updated.' }
+        format.html { redirect_to @category, notice: 'Post was successfully updated.' }
         format.json { render :show, status: :ok, location: @post }
       else
         format.html { render :edit }
@@ -88,7 +90,10 @@ class PostsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def post_params
-      :tag_titles
-      params.require(:post).permit(:title, :body, :username)
+      params.require(:post).permit(:title, :body, :username, :tag_titles)
+    end
+    
+    def set_category
+      @category = Category.find(params[:category_id])
     end
 end
