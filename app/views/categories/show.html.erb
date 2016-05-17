@@ -10,19 +10,18 @@
   <strong>Posts</strong>
   <ul>
   <% @category.posts.each do |post| %>
-  
   <div class="Title"
     <li><%= post.title %> </li>
   </div>
     <div class="postBody">
       <li><%=post.body %></li>
     </div>
+    
+    <%= link_to 'Destroy', category_post_path(category_id: @category.id, id: post.id), method: :delete, data: { confirm: 'Are you sure?' } %>
   <% end %>
   </ul>
 <% end %>
 
 <%= link_to 'New Post', new_category_post_path(@category) %> |
 <%= link_to 'Edit', edit_category_path(@category) %> |
-<%= link_to 'Back', categories_path %> 
-
-
+<%= link_to 'Back', categories_path %>
