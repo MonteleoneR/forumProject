@@ -51,7 +51,7 @@ class PostsController < ApplicationController
   def update
     return head(:forbidden) unless @post.user == current_user
     respond_to do |format|
-      if @post.update(post_params)
+      if @post.update(post_id)
         format.html { redirect_to @category, notice: 'Post was successfully updated.' }
         format.json { render :show, status: :ok, location: @post }
       else
@@ -65,10 +65,17 @@ class PostsController < ApplicationController
   # DELETE /posts/1
   # DELETE /posts/1.json
   def destroy
-    @post.destroy
+    return head(:forbidden) unless @post.user == current_user
+    # @post.destroy
     respond_to do |format|
-      format.html { redirect_to posts_url, notice: 'Post was successfully destroyed.' }
-      format.json { head :no_content }
+      if @post.destroy(post_params)
+        format.html { redirect_to posts_url, notice: 'Post was successfully destroyed.' }
+        format.json { head :no_content }
+      else
+        format.html { render :edit }
+        return head(:forbidden) unless @post.user == current_user
+        format.json { render json: @post.errors, status: :unprocessable_entity }
+      end
     end
   end
 

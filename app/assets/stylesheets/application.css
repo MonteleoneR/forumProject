@@ -13,3 +13,16 @@
  *= require_tree .
  *= require_self
  */
+.postBody {
+    margin-left: 40px;
+    font-style: italic;
+    border-style: dotted;
+    border-color: rgb();
+    
+  }
+  
+.Title {
+     font-weight: bold;
+     border-style: inset;
+     margin-top: 20px;
+}
